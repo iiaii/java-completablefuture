@@ -38,4 +38,8 @@ public class Coffee {
         this.name = name;
         this.price = price;
     }
+
+    public void setPrice(int price) {
+        this.price = price;
+    }
 }

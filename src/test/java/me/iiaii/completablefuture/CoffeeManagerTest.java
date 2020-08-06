@@ -96,6 +96,12 @@ public class CoffeeManagerTest {
         // when
         // then
         CompletableFuture<Void> future = coffeeManager.getCoffeeAsync(coffee.getName())
+                .thenApply(c -> {
+                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(전) "+c);
+                    c.setPrice(c.getPrice()+500);
+                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(후) "+c);
+                    return c;
+                })
                 .thenAccept(c -> {
                     logger.info("커피 : "+c);
                     assertEquals(coffee, c);
