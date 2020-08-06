@@ -182,4 +182,24 @@ public class CoffeeManagerTest {
         assertEquals(expectedTotalPrice, totalPrice.intValue());
     }
 
+
+    @Test
+    public void 할인커피가져오기_비동기로직_2개조합() throws Exception {
+        logger.info("할인커피 가져오기 비동기 로직(2개 조합) 시작");
+        // given
+        Coffee coffee = Coffee.builder()
+                .name("coldBrew")
+                .price(5000)
+                .build();
+        coffeeRepository.save(coffee);
+
+        CompletableFuture<Coffee> future = coffeeManager.getCoffeeAsync(coffee.getName());
+
+        // when
+        future.thenCombine(c -> coffeeManager.getDiscountCoffeeAsync(c)).join();
+
+        // then
+        assertEquals(coffee.getPrice(), discountCoffee.getPrice());
+    }
+
 }

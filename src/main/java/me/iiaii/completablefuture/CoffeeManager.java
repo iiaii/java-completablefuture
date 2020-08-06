@@ -53,7 +53,11 @@ public class CoffeeManager implements CoffeeOrder {
     }
 
     @Override
-    public Future<Coffee> getDiscountCoffeeAsync(Coffee coffee) {
-        return null;
+    public CompletableFuture<Coffee> getDiscountCoffeeAsync(Coffee coffee) {
+        return CompletableFuture.supplyAsync(() -> {
+            logger.info("supplyAsync");
+            coffee.setPrice(coffee.getPrice() - 1000);
+            return coffee;
+        });
     }
 }
