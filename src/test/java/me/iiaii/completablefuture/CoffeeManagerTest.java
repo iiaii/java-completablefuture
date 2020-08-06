@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -35,6 +37,8 @@ public class CoffeeManagerTest {
 
     @Autowired
     private CoffeeRepository coffeeRepository;
+
+
 
     Logger logger = LoggerFactory.getLogger(CoffeeManagerTest.class);
 
@@ -106,6 +110,41 @@ public class CoffeeManagerTest {
                     logger.info("커피 : "+c);
                     assertEquals(coffee, c);
                 });
+
+        for (int i = 0; i <3 ; i++) {
+            logger.info("다른 작업 수행 가능 논 블로킹 "+i);
+            Thread.sleep(1000);
+        }
+
+        // 메인 스레드 종료되지 않도록 추가한 코드
+        assertNull(future.join());
+    }
+
+    @Test
+    public void 커피가져오기_비동기로직_콜백_다른스레드() throws Exception {
+        logger.info("커피 가져오기 비동기 로직(콜백) 시작");
+        // given
+        Coffee coffee = Coffee.builder()
+                .name("coldBrew")
+                .price(5000)
+                .build();
+        coffeeRepository.save(coffee);
+
+        Executor executor = Executors.newFixedThreadPool(5);
+
+        // when
+        // then
+        CompletableFuture<Void> future = coffeeManager.getCoffeeAsync(coffee.getName())
+                .thenApplyAsync(c -> {
+                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(전) "+c);
+                    c.setPrice(c.getPrice()+500);
+                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(후) "+c);
+                    return c;
+                }, executor)
+                .thenAcceptAsync(c -> {
+                    logger.info("커피 : "+c);
+                    assertEquals(coffee, c);
+                }, executor);
 
         for (int i = 0; i <3 ; i++) {
             logger.info("다른 작업 수행 가능 논 블로킹 "+i);

@@ -16,6 +16,7 @@ package me.iiaii.completablefuture;
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
@@ -29,6 +30,8 @@ import java.util.concurrent.Future;
 public class CoffeeManager implements CoffeeOrder {
 
     private final CoffeeService coffeeService;
+
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     Logger logger = LoggerFactory.getLogger(CoffeeManager.class);
 
@@ -46,7 +49,7 @@ public class CoffeeManager implements CoffeeOrder {
         return CompletableFuture.supplyAsync(() -> {
             logger.info("supplyAsync 사용");
             return coffeeService.getCoffeeByName(name);
-        }, Executors.newFixedThreadPool(10));
+        }, threadPoolTaskExecutor);
     }
 
     @Override
