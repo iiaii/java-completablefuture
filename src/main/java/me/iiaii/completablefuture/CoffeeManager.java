@@ -37,15 +37,10 @@ public class CoffeeManager implements CoffeeOrder {
 
         System.out.println("비동기 호출 방식");
 
-        CompletableFuture<Coffee> future = new CompletableFuture<>();
-
-        new Thread(() -> {
-            System.out.println("새로운 스레드 작업 시작");
-            Coffee coffee = coffeeService.getCoffeeByName(name);
-            future.complete(coffee);
-        }).start();
-
-        return future;
+        return CompletableFuture.supplyAsync(() -> {
+            System.out.println("supplyAsync 사용");
+            return coffeeService.getCoffeeByName(name);
+        });
     }
 
     @Override
