@@ -2,6 +2,8 @@ package me.iiaii.completablefuture;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
@@ -34,8 +36,11 @@ public class CoffeeManagerTest {
     @Autowired
     private CoffeeRepository coffeeRepository;
 
+    Logger logger = LoggerFactory.getLogger(CoffeeManagerTest.class);
+
     @Test
     public void 커피가져오기_동기로직() throws Exception {
+        logger.info("커피 가져오기 동기 로직 시작");
         // given
         Coffee coffee = Coffee.builder()
                 .name("coldBrew")
@@ -54,6 +59,7 @@ public class CoffeeManagerTest {
 
     @Test
     public void 커피가져오기_비동기로직_블로킹() throws Exception {
+        logger.info("커피 가져오기 비동기 로직 시작");
         // given
         Coffee coffee = Coffee.builder()
                 .name("coldBrew")
@@ -65,12 +71,12 @@ public class CoffeeManagerTest {
         CompletableFuture<Coffee> future = coffeeManager.getCoffeeAsync(coffee.getName());
 
         for (int i = 0; i <3 ; i++) {
-            System.out.println("데이터 전달 받지 않아서 다른 작업 수행 가능 : "+i);
+            logger.info("데이터 전달 받지 않아서 다른 작업 수행 가능 : "+i);
             Thread.sleep(1000);
         }
 
         Coffee receivedCoffee = future.join();
-        System.out.println("커피 전달 받음 : "+ receivedCoffee);
+        logger.info("커피 전달 받음 : "+ receivedCoffee);
 
 
         // then

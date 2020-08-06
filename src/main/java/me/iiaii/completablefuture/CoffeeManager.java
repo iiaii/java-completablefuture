@@ -14,6 +14,8 @@
 package me.iiaii.completablefuture;
 
 import lombok.RequiredArgsConstructor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
@@ -27,18 +29,21 @@ public class CoffeeManager implements CoffeeOrder {
 
     private final CoffeeService coffeeService;
 
+    Logger logger = LoggerFactory.getLogger(CoffeeManager.class);
+
     @Override
     public Coffee getCoffee(String name) {
+        logger.info("동기 호출 방식");
         return coffeeService.getCoffeeByName(name);
     }
 
     @Override
     public CompletableFuture<Coffee> getCoffeeAsync(String name) {
 
-        System.out.println("비동기 호출 방식");
+        logger.info("비동기 호출 방식");
 
         return CompletableFuture.supplyAsync(() -> {
-            System.out.println("supplyAsync 사용");
+            logger.info("supplyAsync 사용");
             return coffeeService.getCoffeeByName(name);
         });
     }
