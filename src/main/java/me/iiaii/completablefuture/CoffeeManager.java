@@ -21,6 +21,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 
 @Component
@@ -45,7 +46,7 @@ public class CoffeeManager implements CoffeeOrder {
         return CompletableFuture.supplyAsync(() -> {
             logger.info("supplyAsync 사용");
             return coffeeService.getCoffeeByName(name);
-        });
+        }, Executors.newFixedThreadPool(10));
     }
 
     @Override
