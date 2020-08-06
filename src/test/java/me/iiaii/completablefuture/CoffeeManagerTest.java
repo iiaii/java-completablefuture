@@ -59,7 +59,7 @@ public class CoffeeManagerTest {
 
     @Test
     public void 커피가져오기_비동기로직_블로킹() throws Exception {
-        logger.info("커피 가져오기 비동기 로직 시작");
+        logger.info("커피 가져오기 비동기 로직(블로킹) 시작");
         // given
         Coffee coffee = Coffee.builder()
                 .name("coldBrew")
@@ -82,5 +82,33 @@ public class CoffeeManagerTest {
         // then
         assertEquals(coffee, receivedCoffee);
     }
+
+    @Test
+    public void 커피가져오기_비동기로직_콜백() throws Exception {
+        logger.info("커피 가져오기 비동기 로직(콜백) 시작");
+        // given
+        Coffee coffee = Coffee.builder()
+                .name("coldBrew")
+                .price(5000)
+                .build();
+        coffeeRepository.save(coffee);
+
+        // when
+        // then
+        CompletableFuture<Void> future = coffeeManager.getCoffeeAsync(coffee.getName())
+                .thenAccept(c -> {
+                    logger.info("커피 : "+c);
+                    assertEquals(coffee, c);
+                });
+
+        for (int i = 0; i <3 ; i++) {
+            logger.info("다른 작업 수행 가능 논 블로킹 "+i);
+            Thread.sleep(1000);
+        }
+
+        // 메인 스레드 종료되지 않도록 추가한 코드
+        assertNull(future.join());
+    }
+
 
 }
