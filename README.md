@@ -14,7 +14,8 @@ Supplier 함수(입력 인자는 없고 리턴만 있음)를 안에 정의하며
 CompletableFuture<Coffee> future = CompletableFuture.supplyAsync(() -> coffeeService.getCoffeeByName(name));
 
 // Common Pool 이 아닌 지정한 스레드 풀에서 실행 (Common Pool은 스레드 수 제한이 없어서 스레드가 많아지면 성능이 크게 저하될수 있음)
-CompletableFuture<Coffee> future = CompletableFuture.supplyAsync(() -> coffeeService.getCoffeeByName(name), Executors.newFixedThreadPool(10));
+CompletableFuture<Coffee> future = CompletableFuture
+        .supplyAsync(() -> coffeeService.getCoffeeByName(name), Executors.newFixedThreadPool(10));
 ```
 
 - join (Blocking)
@@ -36,9 +37,9 @@ Coffee coffee = CompletableFuture
 join의 경우 블로킹이 발생하지만, thenApply와 thenAccept는 내부에 콜백함수를 정의해서 블로킹이 발생하지 않는다. supplyAsync에 정의한 함수 실행이 완료되었을때 정의한 콜백함수가 실행된다.
 
 thenApply : CompletableFuture<T> 데이터를 포함하는 Future를 반환
+    
 thenAccept : CompletableFuture<Void> 를 반환한다. (즉시 결과를 반환하지 않는다)
     
-
 
 ```java
 CompletableFuture<Void> future = coffeeManager.getCoffeeAsync(coffee.getName())
