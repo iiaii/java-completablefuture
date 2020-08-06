@@ -122,7 +122,7 @@ public class CoffeeManagerTest {
 
     @Test
     public void 커피가져오기_비동기로직_콜백_다른스레드() throws Exception {
-        logger.info("커피 가져오기 비동기 로직(콜백) 시작");
+        logger.info("커피 가져오기 비동기 로직(콜백 다른스레드) 시작");
         // given
         Coffee coffee = Coffee.builder()
                 .name("coldBrew")
@@ -155,5 +155,31 @@ public class CoffeeManagerTest {
         assertNull(future.join());
     }
 
+    @Test
+    public void 커피가져오기_비동기로직_2개CompletableFuture조합() throws Exception {
+        logger.info("커피 가져오기 비동기 로직(2개 조합) 시작");
+        // given
+        Coffee coffee1 = Coffee.builder()
+                .name("coldBrew")
+                .price(5000)
+                .build();
+        Coffee coffee2 = Coffee.builder()
+                .name("latte")
+                .price(6000)
+                .build();
+        coffeeRepository.save(coffee1);
+        coffeeRepository.save(coffee2);
+        int expectedTotalPrice = coffee1.getPrice() + coffee2.getPrice();
+
+        CompletableFuture<Coffee> future1 = coffeeManager.getCoffeeAsync(coffee1.getName());
+        CompletableFuture<Coffee> future2 = coffeeManager.getCoffeeAsync(coffee2.getName());
+
+        // when
+        Integer totalPrice = future1.thenCombine(future2, (c1, c2) -> c1.getPrice() + c2.getPrice()).join();
+        logger.info("예상 가격 : "+expectedTotalPrice +" 커피 총합 : "+totalPrice );
+
+        // then
+        assertEquals(expectedTotalPrice, totalPrice.intValue());
+    }
 
 }
