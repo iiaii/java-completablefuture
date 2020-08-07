@@ -167,6 +167,22 @@ private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
 ```
 
+- exceptionally
+
+지금까지 실행된 completablefuture에서 발생한 Throwable 을 처리할 수 있다. (CompletableFuture는 모든 Exception 을 통합적으로 처리할 수 있음)
+
+```java
+CompletableFuture
+        .runAsync(task)
+        .thenCompose(aVoid -> CompletableFuture.runAsync(task))
+        .thenAcceptAsync(aVoid -> System.out.println("all tasks completed!!"))
+        .exceptionally(throwable -> {
+            System.out.println("exception occurred!!");
+            return null;
+        });
+```
+[completablefuture-exceptionally](https://www.hungrydiver.co.kr/bbs/detail/develop?id=2)
+
 ---
 ### Logger 세팅
 
