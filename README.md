@@ -13,7 +13,11 @@ Supplier 함수(입력 인자는 없고 리턴만 있음)를 안에 정의하며
 ```java
 CompletableFuture<Coffee> future = CompletableFuture.supplyAsync(() -> coffeeService.getCoffeeByName(name));
 
-// Common Pool 이 아닌 지정한 스레드 풀에서 실행 (Common Pool은 스레드 수 제한이 없어서 스레드가 많아지면 성능이 크게 저하될수 있음)
+// CompletableFuture<Coffee> future = coffeeManager.getCoffeeAsync(coffee.getName());
+
+        // when
+        Coffee discountedCoffee = future.thenCompose(c -> coffeeManager.getDiscountCoffeeAsync(c))
+                .join();지정한 스레드 풀에서 실행 (Common Pool은 스레드 수 제한이 없어서 스레드가 많아지면 성능이 크게 저하될수 있음)
 CompletableFuture<Coffee> future = CompletableFuture
         .supplyAsync(() -> coffeeService.getCoffeeByName(name), Executors.newFixedThreadPool(10));
 ```
@@ -69,7 +73,6 @@ future.join();
 CompletableFuture<Coffee> future1 = coffeeManager.getCoffeeAsync(coffee1.getName());
 CompletableFuture<Coffee> future2 = coffeeManager.getCoffeeAsync(coffee2.getName());
 
-// when
 Integer totalPrice = future1.thenCombine(future2, (c1, c2) -> c1.getPrice() + c2.getPrice()).join();
 ```
 
@@ -78,14 +81,69 @@ Integer totalPrice = future1.thenCombine(future2, (c1, c2) -> c1.getPrice() + c2
 thenCombine과 유사하지만 CompletableFuture를 순차적으로 실행한다.
 
 ```java
+CompletableFuture<Coffee> future = coffeeManager.getCoffeeAsync(coffee.getName());
 
-  
+Coffee discountedCoffee = future.thenCompose(c -> coffeeManager.getDiscountCoffeeAsync(c))
+        .join();
 ```
 
 - allOf
 
-```java
+thenCombine, thenCompose 는 명시적으로 2개까지 조합하지만, 여러개를 병렬로 실행해서 조합하는 역할을 한다 (마치 Javascript의 Promise.all 같음)
+allOf 이후의 thenApply, thenAccept는 모든 CompletableFutre가 완료되었을대 실행된다.
 
+```java
+// 테스트 코드 전체
+
+// given
+List<Coffee> coffees = new ArrayList<>();
+
+coffees.add(
+        Coffee.builder()
+        .name("coldBrew")
+        .price(5000)
+        .build()
+);
+coffees.add(
+        Coffee.builder()
+                .name("latte")
+                .price(6000)
+                .build()
+);
+coffees.add(
+        Coffee.builder()
+                .name("mocha")
+                .price(5500)
+                .build()
+);
+coffees.forEach(coffeeRepository::save);
+
+int expectedPrice = coffees.stream()
+        .mapToInt(Coffee::getPrice)
+        .reduce(0, Integer::sum);
+
+List<CompletableFuture<Coffee>> completableFutures = coffees.stream()
+        .map(Coffee::getName)
+        .map(coffeeManager::getCoffeeAsync)
+        .collect(Collectors.toList());
+
+// when
+List<Coffee> completedCoffees = CompletableFuture
+        .allOf(completableFutures.stream().toArray(CompletableFuture[]::new))
+        .thenApply(Void ->
+                completableFutures.stream()
+                        .map(CompletableFuture::join)
+                        .collect(Collectors.toList())
+        )
+        .join();
+
+int totalPrice = completedCoffees.stream()
+        .mapToInt(Coffee::getPrice)
+        .reduce(0, Integer::sum);
+
+
+// then
+assertEquals(expectedPrice, totalPrice);
 ```
 
 ---
