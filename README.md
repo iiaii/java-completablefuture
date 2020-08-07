@@ -13,11 +13,7 @@ Supplier 함수(입력 인자는 없고 리턴만 있음)를 안에 정의하며
 ```java
 CompletableFuture<Coffee> future = CompletableFuture.supplyAsync(() -> coffeeService.getCoffeeByName(name));
 
-// CompletableFuture<Coffee> future = coffeeManager.getCoffeeAsync(coffee.getName());
-
-        // when
-        Coffee discountedCoffee = future.thenCompose(c -> coffeeManager.getDiscountCoffeeAsync(c))
-                .join();지정한 스레드 풀에서 실행 (Common Pool은 스레드 수 제한이 없어서 스레드가 많아지면 성능이 크게 저하될수 있음)
+// 지정한 스레드 풀에서 실행 (Common Pool은 스레드 수 제한이 없어서 스레드가 많아지면 성능이 크게 저하될수 있음)
 CompletableFuture<Coffee> future = CompletableFuture
         .supplyAsync(() -> coffeeService.getCoffeeByName(name), Executors.newFixedThreadPool(10));
 ```
