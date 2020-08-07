@@ -89,8 +89,8 @@ Coffee discountedCoffee = future.thenCompose(c -> coffeeManager.getDiscountCoffe
 
 - allOf
 
-thenCombine, thenCompose 는 명시적으로 2개까지 조합하지만, 여러개를 병렬로 실행해서 조합하는 역할을 한다 (마치 Javascript의 Promise.all 같음)
-allOf 이후의 thenApply, thenAccept는 모든 CompletableFutre가 완료되었을대 실행된다.
+thenCombine, thenCompose 는 명시적으로 2개까지 조합하지만, allOf 는 여러개를 병렬로 실행해서 조합하는 역할을 한다 (마치 Javascript의 Promise.all 같음)
+allOf 이후의 thenApply, thenAccept는 모든 CompletableFutre가 완료 된 후 실행된다.
 
 ```java
 // 테스트 코드 전체
