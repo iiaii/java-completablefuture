@@ -10,29 +10,16 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.function.IntFunction;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
-/* Copyright (c) 2020 ZUM Internet, Inc.
- * All right reserved.
- * http://www.zum.com
- * This software is the confidential and proprietary information of ZUM
- * , Inc. You shall not disclose such Confidential Information and
- * shall use it only in accordance with the terms of the license agreement
- * you entered into with ZUM.
- *
- * Revision History
- * Author                    Date                     Description
- * ------------------       --------------            ------------------
- *   iiaii                2020-08-06
- */
+
 
 @ExtendWith(SpringExtension.class)
 @SpringBootTest
