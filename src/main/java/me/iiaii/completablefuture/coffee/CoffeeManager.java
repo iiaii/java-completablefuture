@@ -1,5 +1,5 @@
 
-package me.iiaii.completablefuture;
+package me.iiaii.completablefuture.coffee;
 
 import lombok.RequiredArgsConstructor;
 import org.slf4j.Logger;

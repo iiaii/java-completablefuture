@@ -1,4 +1,4 @@
-package me.iiaii.completablefuture;
+package me.iiaii.completablefuture.coffee;
 
 import java.util.concurrent.Future;
 

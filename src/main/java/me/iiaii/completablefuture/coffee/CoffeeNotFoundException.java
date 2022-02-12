@@ -1,5 +1,5 @@
 
-package me.iiaii.completablefuture;
+package me.iiaii.completablefuture.coffee;
 
 public class CoffeeNotFoundException extends RuntimeException {
     public CoffeeNotFoundException(String name) {

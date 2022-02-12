@@ -1,4 +1,4 @@
-package me.iiaii.completablefuture;
+package me.iiaii.completablefuture.coffee;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 
