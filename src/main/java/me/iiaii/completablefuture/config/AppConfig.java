@@ -21,8 +21,8 @@ public class AppConfig {
         return taskExecutor;
     }
 
-    @Bean
-    public ApiCaller apiCaller() {
+    @Bean(name = "jsonPlaceHolderApiCaller")
+    public ApiCaller jsonPlaceHolderApiCaller() {
         return new ApiCaller("https://jsonplaceholder.typicode.com");
     }
 

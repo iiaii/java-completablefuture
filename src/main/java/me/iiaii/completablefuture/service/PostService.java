@@ -13,10 +13,10 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class PostService {
 
-    private final ApiCaller apiCaller;
+    private final ApiCaller jsonPlaceHolderApiCaller;
 
     public List<PostDto> fetchPosts(final int postSize) {
-        return Arrays.stream(apiCaller.fetch("/posts", PostDto[].class))
+        return Arrays.stream(jsonPlaceHolderApiCaller.fetch("/posts", PostDto[].class))
                 .limit(postSize)
                 .collect(Collectors.toList());
     }

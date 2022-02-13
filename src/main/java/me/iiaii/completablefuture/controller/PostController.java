@@ -17,10 +17,16 @@ public class PostController {
 
     private final PostFacade postFacade;
 
-    @GetMapping("")
-    public List<PostResponseDto> fetchTopPosts(@RequestParam(required = false, defaultValue = "5") int postSize,
+    @GetMapping("/v1")
+    public List<PostResponseDto> fetchTopPostsV1(@RequestParam(required = false, defaultValue = "5") int postSize,
                                                @RequestParam(required = false, defaultValue = "3") int commentSize) {
-        return postFacade.fetchTopPosts(postSize, commentSize);
+        return postFacade.fetchTopPostsV1(postSize, commentSize);
+    }
+
+    @GetMapping("/v2")
+    public List<PostResponseDto> fetchTopPostsV2(@RequestParam(required = false, defaultValue = "5") int postSize,
+                                               @RequestParam(required = false, defaultValue = "3") int commentSize) {
+        return postFacade.fetchTopPostsV2(postSize, commentSize);
     }
 
 }

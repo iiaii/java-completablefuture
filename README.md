@@ -47,13 +47,13 @@ thenAccept : CompletableFuture<Void> 를 반환한다. (즉시 결과를 반환�
 ```java
 CompletableFuture<Void> future = coffeeManager.getCoffeeAsync(coffee.getName())
                 .thenApply(c -> {
-                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(전) "+c);
+                    log.info("같은 스레드로 동작 커피 가격 500원 올리기(전) "+c);
                     c.setPrice(c.getPrice()+500);
-                    logger.info("같은 스레드로 동작 커피 가격 500원 올리기(후) "+c);
+                    log.info("같은 스레드로 동작 커피 가격 500원 올리기(후) "+c);
                     return c;
                 })
                 .thenAccept(c -> {
-                    logger.info("커피 : "+c);
+                    log.info("커피 : "+c);
                     assertEquals(coffee, c);
                 });
                 
@@ -184,26 +184,6 @@ public class TaskConfig {
 // @Autowired (@RequiredArgsConstructor)
 private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-```
-
----
-### Logger 세팅
-
-
-build.gradle
-```gradle
-...
-
-// SLF4J - Log4j2
-implementation 'org.springframework.boot:spring-boot-starter-log4j2'
-
-...
-```
-
-```java
-Logger logger = LoggerFactory.getLogger(CoffeeManager.class);
-
-logger.info("...");
 ```
 
 

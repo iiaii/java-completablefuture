@@ -2,13 +2,13 @@
 package me.iiaii.completablefuture.coffee;
 
 import lombok.RequiredArgsConstructor;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import java.util.concurrent.CompletableFuture;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class CoffeeManager implements CoffeeOrder {
@@ -17,21 +17,19 @@ public class CoffeeManager implements CoffeeOrder {
 
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
-    Logger logger = LoggerFactory.getLogger(CoffeeManager.class);
-
     @Override
     public Coffee getCoffee(String name) {
-        logger.info("동기 호출 방식");
+        log.info("동기 호출 방식");
         return coffeeService.getCoffeeByName(name);
     }
 
     @Override
     public CompletableFuture<Coffee> getCoffeeAsync(String name) {
 
-        logger.info("비동기 호출 방식");
+        log.info("비동기 호출 방식");
 
         return CompletableFuture.supplyAsync(() -> {
-            logger.info("supplyAsync 사용");
+            log.info("supplyAsync 사용");
             return coffeeService.getCoffeeByName(name);
         }, threadPoolTaskExecutor);
     }
@@ -39,7 +37,7 @@ public class CoffeeManager implements CoffeeOrder {
     @Override
     public CompletableFuture<Coffee> getDiscountCoffeeAsync(Coffee coffee) {
         return CompletableFuture.supplyAsync(() -> {
-            logger.info("supplyAsync");
+            log.info("supplyAsync");
             coffee.setPrice(coffee.getPrice() - 1000);
             return coffee;
         });
