@@ -3,11 +3,14 @@ package me.iiaii.completablefuture.service;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
 import me.iiaii.completablefuture.config.ApiCaller;
+import me.iiaii.completablefuture.scheduler.Pollable;
 import me.iiaii.completablefuture.service.dto.PostDto;
 import me.iiaii.completablefuture.service.dto.UserDto;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
 @Service

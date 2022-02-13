@@ -32,16 +32,7 @@ dependencies {
     annotationProcessor('org.projectlombok:lombok')
     testAnnotationProcessor('org.projectlombok:lombok')
 
-    testImplementation('org.springframework.boot:spring-boot-starter-test') {
-        exclude group: 'org.junit.vintage', module: 'junit-vintage-engine'
-    }
-
-    testImplementation('org.junit.jupiter:junit-jupiter-api:5.2.0') {
-        exclude module: 'junit-platform-commons'
-    }
-    testRuntime('org.junit.jupiter:junit-jupiter-engine:5.2.0')
-    testRuntime('org.junit.platform:junit-platform-engine:1.5.1')
-    testRuntime('org.junit.platform:junit-platform-commons:1.5.1')
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
 }
 
 test {

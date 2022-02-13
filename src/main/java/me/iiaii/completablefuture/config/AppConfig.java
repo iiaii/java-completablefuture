@@ -1,6 +1,7 @@
 
 package me.iiaii.completablefuture.config;
 
+import org.springframework.cache.interceptor.SimpleKeyGenerator;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
@@ -24,6 +25,11 @@ public class AppConfig {
     @Bean(name = "jsonPlaceHolderApiCaller")
     public ApiCaller jsonPlaceHolderApiCaller() {
         return new ApiCaller("https://jsonplaceholder.typicode.com");
+    }
+
+    @Bean
+    public SimpleKeyGenerator simpleKeyGenerator() {
+        return new SimpleKeyGenerator();
     }
 
 }

@@ -29,4 +29,15 @@ public class PostController {
         return postFacade.fetchTopPostsV2(postSize, commentSize);
     }
 
+    @GetMapping("/v3")
+    public List<PostResponseDto> fetchTopPostsV3(@RequestParam(required = false, defaultValue = "5") int postSize,
+                                                 @RequestParam(required = false, defaultValue = "3") int commentSize) {
+        return postFacade.fetchTopPostsV3(postSize, commentSize);
+    }
+
+    @GetMapping("/v4")
+    public List<PostResponseDto> fetchTopPostsV4() {
+        return postFacade.fetchTopPostsV4();
+    }
+
 }
