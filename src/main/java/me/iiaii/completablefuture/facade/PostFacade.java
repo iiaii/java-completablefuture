@@ -37,6 +37,13 @@ public class PostFacade implements Pollable {
     private final PostService postService;
     private final CommentService commentService;
 
+    /**
+     * 기본 api 조합 후 반환
+     *
+     * @param postSize
+     * @param commentSize
+     * @return
+     */
     public List<PostResponseDto> fetchTopPostsV1(final int postSize, final int commentSize) {
         List<PostDto> posts = postService.fetchPosts(postSize);
         List<UserDto> users = userService.fetchUsers(posts);
@@ -44,6 +51,13 @@ public class PostFacade implements Pollable {
         return PostResponseDto.toDtos(posts, users, comments);
     }
 
+    /**
+     * CompletableFuture 로 api 조합 후 반환
+     *
+     * @param postSize
+     * @param commentSize
+     * @return
+     */
     public List<PostResponseDto> fetchTopPostsV2(final int postSize, final int commentSize) {
         List<PostDto> posts = postService.fetchPosts(postSize);
         CompletableFuture<List<UserDto>> usersCF = CompletableFuture.supplyAsync(() -> userService.fetchUsers(posts))
@@ -60,11 +74,23 @@ public class PostFacade implements Pollable {
                 .join();
     }
 
+    /**
+     * CompletableFuture + EhCache
+     *
+     * @param postSize
+     * @param commentSize
+     * @return
+     */
     @Cacheable(keyGenerator = "simpleKeyGenerator")
     public List<PostResponseDto> fetchTopPostsV3(final int postSize, final int commentSize) {
         return fetchTopPostsV2(postSize, commentSize);
     }
 
+    /**
+     * CompletableFuture + EhCache + Scheduled
+     *
+     * @return
+     */
     @Cacheable(key = "'defaultPost'")
     public List<PostResponseDto> fetchTopPostsV4() {
         return fetchTopPostsV2(DEFAULT_POST_SIZE, DEFAULT_COMMENT_SIZE);
