@@ -18,7 +18,7 @@ public class CoffeeService {
             log.info("1초 대기");
             Thread.sleep(1000);
         } catch (InterruptedException e) {
-            e.printStackTrace();
+            log.error("thread error. " + e.getMessage());
         }
 
         return coffeeRepository.findByName(name)
@@ -28,4 +28,5 @@ public class CoffeeService {
     public void registerCoffee(Coffee coffee) {
         coffeeRepository.save(coffee);
     }
+
 }

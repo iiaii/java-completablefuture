@@ -14,7 +14,6 @@ import java.util.concurrent.CompletableFuture;
 public class CoffeeManager implements CoffeeOrder {
 
     private final CoffeeService coffeeService;
-
     private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Override
@@ -25,7 +24,6 @@ public class CoffeeManager implements CoffeeOrder {
 
     @Override
     public CompletableFuture<Coffee> getCoffeeAsync(String name) {
-
         log.info("비동기 호출 방식");
 
         return CompletableFuture.supplyAsync(() -> {

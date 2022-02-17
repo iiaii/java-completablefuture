@@ -61,7 +61,7 @@ public class PostFacade implements Pollable {
      * @return
      */
     public List<PostResponseDto> fetchTopPostsV2(final int postSize, final int commentSize) {
-        return fetchTopPostsAllOf(postSize, commentSize);
+        return fetchTopPostsAsync(postSize, commentSize);
     }
 
 
@@ -75,7 +75,7 @@ public class PostFacade implements Pollable {
      */
     @Cacheable(keyGenerator = "simpleKeyGenerator")
     public List<PostResponseDto> fetchTopPostsV3(final int postSize, final int commentSize) {
-        return fetchTopPostsAllOf(postSize, commentSize);
+        return fetchTopPostsAsync(postSize, commentSize);
     }
 
     /**
@@ -85,7 +85,7 @@ public class PostFacade implements Pollable {
      */
     @Cacheable(key = "'defaultPost'")
     public List<PostResponseDto> fetchTopPostsV4() {
-        return fetchTopPostsAllOf(DEFAULT_POST_SIZE, DEFAULT_COMMENT_SIZE);
+        return fetchTopPostsAsync(DEFAULT_POST_SIZE, DEFAULT_COMMENT_SIZE);
     }
 
     @Override
@@ -94,26 +94,42 @@ public class PostFacade implements Pollable {
     }
 
     /**
-     * CompletableFuture allOf 로 api 조합 후 반환
+     * CompletableFuture allOf 로 api 비동기 호출 및 조합 후 반환
      *
      * @param postSize
      * @param commentSize
      * @return
      */
-    private List<PostResponseDto> fetchTopPostsAllOf(final int postSize, final int commentSize) {
-        List<PostDto> posts = postService.fetchPosts(postSize);
-        CompletableFuture<List<UserDto>> usersCF = CompletableFuture.supplyAsync(() -> userService.fetchUsers(posts), threadPoolTaskExecutor)
-                .exceptionally(throwable -> Collections.emptyList());
-        CompletableFuture<List<List<CommentDto>>> commentsCF = CompletableFuture.supplyAsync(() -> commentService.fetchAllComments(posts, commentSize), threadPoolTaskExecutor)
-                .exceptionally(throwable -> Collections.emptyList());
-
-        return CompletableFuture.allOf(usersCF, commentsCF)
-                .thenApply(Void -> {
-                    List<UserDto> users = usersCF.join();
-                    List<List<CommentDto>> comments = commentsCF.join();
-                    return PostResponseDto.toDtos(posts, users, comments);
-                })
+    private List<PostResponseDto> fetchTopPostsAsync(final int postSize, final int commentSize) {
+        return getPostsAsync(postSize).thenCompose(posts -> getTopPostsAsyncAllOf(posts, commentSize))
+                .exceptionally(throwable -> Collections.emptyList())
                 .join();
+    }
+
+    private CompletableFuture<List<PostResponseDto>> getTopPostsAsyncAllOf(final List<PostDto> posts, final int commentSize) {
+        if (posts.isEmpty()) {
+            return CompletableFuture.completedFuture(Collections.emptyList());
+        }
+
+        CompletableFuture<List<UserDto>> userCF = getUsersAsync(posts);
+        CompletableFuture<List<List<CommentDto>>> commentsCF = getCommentsAsync(posts, commentSize);
+        return CompletableFuture.allOf(userCF, commentsCF)
+                .thenApply(Void -> PostResponseDto.toDtos(posts, userCF.join(), commentsCF.join()));
+    }
+
+    private CompletableFuture<List<PostDto>> getPostsAsync(final int postSize) {
+        return CompletableFuture.supplyAsync(() -> postService.fetchPosts(postSize), threadPoolTaskExecutor)
+                .exceptionally(throwable -> Collections.emptyList());
+    }
+
+    private CompletableFuture<List<UserDto>> getUsersAsync(final List<PostDto> posts) {
+        return CompletableFuture.supplyAsync(() -> userService.fetchUsers(posts), threadPoolTaskExecutor)
+                .exceptionally(throwable -> Collections.emptyList());
+    }
+
+    private CompletableFuture<List<List<CommentDto>>> getCommentsAsync(final List<PostDto> posts, final int commentSize) {
+        return CompletableFuture.supplyAsync(() -> commentService.fetchAllComments(posts, commentSize), threadPoolTaskExecutor)
+                .exceptionally(throwable -> Collections.emptyList());
     }
 
 }

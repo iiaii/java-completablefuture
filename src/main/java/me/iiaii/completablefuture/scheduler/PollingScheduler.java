@@ -13,18 +13,19 @@ import java.util.concurrent.CompletableFuture;
 @RequiredArgsConstructor
 public class PollingScheduler {
 
+    private static final int SECOND = 1000;
+
     private final List<Pollable> pollables;
 
-    @Scheduled(fixedDelay = 30 * 1000)  // 30초
+    /**
+     * 30초 마다 Pollable 을 구현하는 poll 메서드를 호출하여 캐싱해야할 데이터 적재
+     */
+    @Scheduled(fixedDelay = 30 * SECOND)
     public void refresh() {
         CompletableFuture.allOf(pollables.stream()
                         .map(Pollable::poll)
                         .toArray(CompletableFuture[]::new)
                 )
-                .exceptionally(throwable -> {
-                    log.error("polling fail.");
-                    return null;
-                })
                 .thenRun(() -> log.info("polling cache success!"))
                 .join();
     }
