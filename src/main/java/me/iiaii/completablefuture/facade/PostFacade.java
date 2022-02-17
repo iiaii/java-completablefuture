@@ -13,6 +13,7 @@ import me.iiaii.completablefuture.service.dto.UserDto;
 import org.springframework.cache.annotation.CacheConfig;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.cache.interceptor.SimpleKeyGenerator;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
 import javax.annotation.Resource;
@@ -28,6 +29,8 @@ public class PostFacade implements Pollable {
 
     private static final int DEFAULT_POST_SIZE = 5;
     private static final int DEFAULT_COMMENT_SIZE = 3;
+
+    private final ThreadPoolTaskExecutor threadPoolTaskExecutor;
 
     @Resource
     private PostFacade self;
@@ -99,9 +102,9 @@ public class PostFacade implements Pollable {
      */
     private List<PostResponseDto> fetchTopPostsAllOf(final int postSize, final int commentSize) {
         List<PostDto> posts = postService.fetchPosts(postSize);
-        CompletableFuture<List<UserDto>> usersCF = CompletableFuture.supplyAsync(() -> userService.fetchUsers(posts))
+        CompletableFuture<List<UserDto>> usersCF = CompletableFuture.supplyAsync(() -> userService.fetchUsers(posts), threadPoolTaskExecutor)
                 .exceptionally(throwable -> Collections.emptyList());
-        CompletableFuture<List<List<CommentDto>>> commentsCF = CompletableFuture.supplyAsync(() -> commentService.fetchAllComments(posts, commentSize))
+        CompletableFuture<List<List<CommentDto>>> commentsCF = CompletableFuture.supplyAsync(() -> commentService.fetchAllComments(posts, commentSize), threadPoolTaskExecutor)
                 .exceptionally(throwable -> Collections.emptyList());
 
         return CompletableFuture.allOf(usersCF, commentsCF)

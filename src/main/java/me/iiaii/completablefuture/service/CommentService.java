@@ -1,7 +1,6 @@
 package me.iiaii.completablefuture.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.SneakyThrows;
 import me.iiaii.completablefuture.config.ApiCaller;
 import me.iiaii.completablefuture.service.dto.CommentDto;
 import me.iiaii.completablefuture.service.dto.PostDto;
