@@ -1,6 +1,6 @@
 # Java CompletableFuture
 
-해당 프로젝트의 [coffee 패키지](https://github.com/iiaii/java-completablefuture/tree/master/src/main/java/me/iiaii/completablefuture/coffee)와 [coffet 테스트](https://github.com/iiaii/java-completablefuture/blob/master/src/test/java/me/iiaii/completablefuture/coffee/CoffeeManagerTest.java)는 [해당 블로그](https://brunch.co.kr/@springboot/267#comment)의 내용에서 Jpa를 적용하고 Coffee 객체를 가져오는 예제로 다듬어 보았다. (사실상 같음)
+해당 프로젝트의 [coffee 패키지](https://github.com/iiaii/java-completablefuture/tree/master/src/main/java/me/iiaii/completablefuture/coffee)와 [coffet 테스트](https://github.com/iiaii/java-completablefuture/blob/master/src/test/java/me/iiaii/completablefuture/coffee/CoffeeManagerTest.java)는 [이 블로그](https://brunch.co.kr/@springboot/267#comment)의 내용에서 Jpa를 적용하고 Coffee 객체를 가져오는 예제로 다듬어 보았다. (사실상 같음)
 
 
 java 에서는 Future interface 로 Async 기능을 제공했지만 get() 메서드 사용으로 blocking을 유발한다. 이를 해결하기 위해 CompletableFuture 가 등장하게 되었다.
